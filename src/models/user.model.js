@@ -11,7 +11,7 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    date_of_birth: {
+    birth_date: {
       type: Date,
       required: true,
     },
@@ -25,4 +25,4 @@ const userSchema = new mongoose.Schema(
   }
 );
 
-export default mongoose.model("User", userSchema);
+export default mongoose.model("User", userSchema, "users");
