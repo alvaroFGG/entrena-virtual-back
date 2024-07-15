@@ -1,4 +1,4 @@
-import { createAccessToken } from "../libs/jwt.js";
+import { createAccessToken, getTokenVerification } from "../libs/jwt.js";
 import User from "../models/user.model.js";
 import bcrypt from "bcryptjs";
 
@@ -39,4 +39,22 @@ export const login = async (req, res) => {
   } catch (error) {
     return res.status(500).json({ error: error.message });
   }
+};
+
+export const verifyToken = async (req, res) => {
+  const { token } = req.cookies;
+
+  if (!token) return res.send(false);
+
+  const verified = await getTokenVerification(token);
+
+  if (!verified) return res.send(false);
+
+  const userFound = await User.findById(verified.id).select("-password");
+  if (!userFound) return res.send(false);
+
+  return res.json({
+    data: userFound,
+    error: null,
+  });
 };
