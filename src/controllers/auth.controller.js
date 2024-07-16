@@ -2,6 +2,12 @@ import { createAccessToken, getTokenVerification } from "../libs/jwt.js";
 import User from "../models/user.model.js";
 import bcrypt from "bcryptjs";
 
+const calcAge = (birthDate) => {
+  const diff = Date.now() - birthDate.getTime();
+  const ageDate = new Date(diff);
+  return Math.abs(ageDate.getUTCFullYear() - 1970);
+};
+
 export const login = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -33,6 +39,8 @@ export const login = async (req, res) => {
       data: {
         id: userFound._id,
         email: userFound.email,
+        birthDate: userFound.birth_date,
+        age: calcAge(userFound.birth_date),
       },
       error: null,
     });
@@ -54,7 +62,12 @@ export const verifyToken = async (req, res) => {
   if (!userFound) return res.send(false);
 
   return res.json({
-    data: userFound,
+    data: {
+      id: userFound._id,
+      email: userFound.email,
+      birthDate: userFound.birth_date,
+      age: calcAge(userFound.birth_date),
+    },
     error: null,
   });
 };
